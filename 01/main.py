@@ -1,9 +1,22 @@
+import argparse
 from pprint import pprint
 
-def import_rotations():
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-f",
+        "--file",
+        required=True,
+        type=str,
+        help="Path to safe comibination input file"
+    )
+
+    return parser.parse_args()
+
+def import_rotations(filepath):
     dial_rotations = list()
 
-    with open("input.txt", "r") as text_input:
+    with open(filepath, "r") as text_input:
         combo_input = text_input.readlines()
 
     for combo in combo_input:
@@ -39,9 +52,10 @@ def passes_zero_check(dial_current, dial_rotations):
     return actual_combination
 
 def main():
+    args = parse_args()
     dial_start = 50
     dial_current = dial_start
-    dial_rotations = import_rotations()
+    dial_rotations = import_rotations(args.file)
 
     num_exactly_zero = exactly_zero_check(dial_current, dial_rotations)
     num_passes_zero = passes_zero_check(dial_current, dial_rotations)
