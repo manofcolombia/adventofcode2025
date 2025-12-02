@@ -32,11 +32,15 @@ def import_rotations(filepath):
 
 def exactly_zero_check(dial_current, dial_rotations):
     actual_combination = 0
+
     for rotation in dial_rotations:
-        if rotation["direction"] == "L":
-            dial_current = dial_current - rotation["amount"]
+        direction = rotation["direction"]
+        amount = rotation["amount"]
+
+        if direction == "L":
+            dial_current = dial_current - amount
         else:
-            dial_current = dial_current + rotation["amount"]
+            dial_current = dial_current + amount
 
         # Check if the dial is at literal 0 or if divisable by 100 evenly
         if dial_current == 0 or dial_current % 100 == 0:
@@ -47,14 +51,33 @@ def exactly_zero_check(dial_current, dial_rotations):
 def passes_zero_check(dial_current, dial_rotations):
     actual_combination = 0
 
+    for rotation in dial_rotations:
+        direction = rotation["direction"]
+        amount = rotation["amount"]
 
+        if direction == "R":
+            clicks_until_zero = (100 - dial_current) % 100
+        else:
+            clicks_until_zero = dial_current % 100
 
-    return actual_combination
+        if clicks_until_zero == 0:
+            clicks_until_zero = 100
+
+        if amount >= clicks_until_zero:
+            actual_combination += 1
+            actual_combination += (amount - clicks_until_zero) // 100
+
+        if direction == "R":
+            dial_current = (dial_current + amount) % 100
+        else:
+            dial_current = (dial_current - amount) % 100
+
+    return int(actual_combination)
 
 def main():
     args = parse_args()
-    dial_start = 50
-    dial_current = dial_start
+
+    dial_current = 50
     dial_rotations = import_rotations(args.file)
 
     num_exactly_zero = exactly_zero_check(dial_current, dial_rotations)
