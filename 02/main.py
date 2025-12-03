@@ -33,17 +33,21 @@ def get_real_ranges(product_ids):
     return real_ranges
 
 def check_for_bad_id(prod_id_ranges):
-    bad_ids = list()
+    bad_ids = set()
     for r in prod_id_ranges:
         pprint(r)
         start = int(r['start'])
         end = int(r['end'])
         for i in range(start, end+1 ):
             len_of_id = len(str(i))
-            split_id = wrap(str(i), len_of_id // 2 )
-            pprint(split_id)
-            if split_id[0] == split_id[1]:
-                bad_ids.append(i)
+            width = max(1, len_of_id // 2)
+            split_id = wrap(str(i), width )
+            for x in range(len(split_id)):
+                for y in range(x+1, len(split_id)):
+                    if split_id[x] == split_id[y]:
+                        bad_id = split_id[x]+split_id[y]
+                        if not bad_id.startswith('0'):
+                            bad_ids.add(int(bad_id))
     return bad_ids
 
 def main():
@@ -55,7 +59,10 @@ def main():
 
     bad_ids = check_for_bad_id(prod_id_ranges)
 
-    pprint(bad_ids)
+    bad_id_sum = int()
+    for bad_id in bad_ids:
+        bad_id_sum += bad_id
+    pprint(bad_id_sum)
 
 if __name__ == "__main__":
     main()
